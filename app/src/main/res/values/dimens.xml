@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="item_decoration_title_height">20dp</dimen>
+    <dimen name="item_decoration_title_start_margin">16dp</dimen>
+    <dimen name="item_decoration_title_fontsize">12sp</dimen>
+
+</resources>
