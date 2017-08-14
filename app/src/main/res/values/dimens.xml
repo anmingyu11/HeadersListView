@@ -4,4 +4,7 @@
     <dimen name="item_decoration_title_start_margin">16dp</dimen>
     <dimen name="item_decoration_title_fontsize">12sp</dimen>
 
+    <dimen name="item_height">64dp</dimen>
+    <dimen name="item_width">104dp</dimen>
+    <dimen name="left_open_distance_file">270dp</dimen>
 </resources>

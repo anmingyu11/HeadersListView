@@ -1,25 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:orientation="vertical"
-    >
+<com.amy.headersdemo.widget.SwipeItemLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/item_left_shadow"
+    app:bga_sil_bottomMode="layDown"
+    app:bga_sil_swipeDirection="right">
 
-    <TextView
-        android:id="@+id/log_content"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@android:color/holo_blue_dark"
-        android:textSize="20dp"
-        android:textStyle="bold"
+    <include
+        layout="@layout/log_item_bottom_left_layer"
+        android:layout_width="@dimen/item_width"
+        android:layout_height="@dimen/item_height"
         />
 
-    <TextView
-        android:id="@+id/log_date"
+    <include
+        layout="@layout/log_item_top_layer"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@android:color/holo_green_light"
-        android:textSize="15dp"
+        android:layout_height="@dimen/item_height"
         />
 
-</LinearLayout>
+</com.amy.headersdemo.widget.SwipeItemLayout>

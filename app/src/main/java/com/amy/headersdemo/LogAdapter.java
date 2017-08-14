@@ -7,6 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.amy.headersdemo.widget.SwipeItemLayout;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,6 +17,7 @@ public class LogAdapter extends RecyclerView.Adapter<LogAdapter.LogViewHolder> {
     private Context mContext;
 
     private List<LogItem> mLogItemList = new ArrayList<LogItem>();
+    private List<SwipeItemLayout> mOpenedSil = new ArrayList<>();
 
     public LogAdapter() {
     }
@@ -40,6 +43,23 @@ public class LogAdapter extends RecyclerView.Adapter<LogAdapter.LogViewHolder> {
         LogItem item = mLogItemList.get(position);
         holder.mLogContentView.setText(item.getContent());
         holder.mLogDateView.setText(item.getDate());
+        holder.mRoot.setDelegate(new SwipeItemLayout.SwipeItemLayoutDelegate() {
+            @Override
+            public void onSwipeItemLayoutOpened(SwipeItemLayout swipeItemLayout) {
+                closeOpenedSwipeItemLayoutWithAnim();
+                mOpenedSil.add(swipeItemLayout);
+            }
+
+            @Override
+            public void onSwipeItemLayoutClosed(SwipeItemLayout swipeItemLayout) {
+                mOpenedSil.remove(swipeItemLayout);
+            }
+
+            @Override
+            public void onSwipeItemLayoutStartOpen(SwipeItemLayout swipeItemLayout) {
+                closeOpenedSwipeItemLayoutWithAnim();
+            }
+        });
     }
 
     @Override
@@ -47,13 +67,22 @@ public class LogAdapter extends RecyclerView.Adapter<LogAdapter.LogViewHolder> {
         return mLogItemList.size();
     }
 
+    public void closeOpenedSwipeItemLayoutWithAnim() {
+        for (SwipeItemLayout sil : mOpenedSil) {
+            sil.closeWithAnim();
+        }
+        mOpenedSil.clear();
+    }
+
     public final class LogViewHolder extends RecyclerView.ViewHolder {
 
+        private SwipeItemLayout mRoot;
         private TextView mLogContentView;
         private TextView mLogDateView;
 
         public LogViewHolder(View itemView) {
             super(itemView);
+            mRoot = (SwipeItemLayout) itemView;
             mLogDateView = itemView.findViewById(R.id.log_date);
             mLogContentView = itemView.findViewById(R.id.log_content);
         }

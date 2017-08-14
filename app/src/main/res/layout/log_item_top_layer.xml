@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/item_height"
+                android:background="@android:color/background_light"
+    >
+
+    <CheckBox
+        android:id="@+id/log_item_edit_checked"
+        style="@style/item_checkbox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:visibility="gone"
+        />
+
+    <LinearLayout
+        android:id="@+id/log_item_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:orientation="vertical"
+        >
+
+        <TextView
+            android:id="@+id/log_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="content--------------------"
+            android:textSize="20dp"
+            android:textStyle="bold"
+            />
+
+        <TextView
+            android:id="@+id/log_date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="date------------------------"
+            android:textSize="15dp"
+            />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/log_item_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@id/log_item_content"
+        android:text="同意"
+        android:textSize="20dp"
+        />
+
+</RelativeLayout>

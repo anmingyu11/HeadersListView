@@ -5,6 +5,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.ViewConfiguration;
 
 import com.amy.headersdemo.util.LogUtil;
 import com.amy.headersdemo.util.TimeUtil;
@@ -15,6 +18,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+
+    private int mSlop;
 
     private RecyclerView mRecyclerView;
 
@@ -27,10 +32,17 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+
+        mSlop = ViewConfiguration.get(this).getScaledTouchSlop();
+
         initData();
 
         setContentView(R.layout.main);
 
+        initRecyclerView();
+    }
+
+    public void initRecyclerView() {
         mRecyclerView = (RecyclerView) findViewById(R.id.main_list);
 
         mLogAdapter = new LogAdapter();
@@ -46,7 +58,36 @@ public class MainActivity extends AppCompatActivity {
         mRecyclerView.addItemDecoration(floatingBarItemDecoration);
 
         mRecyclerView.setAdapter(mLogAdapter);
+        mRecyclerView.setOnTouchListener(new View.OnTouchListener() {
 
+            int dx = 0;
+            int dy = 0;
+
+            @Override
+            public boolean onTouch(View view, MotionEvent e) {
+
+                switch (e.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        dx = (int) e.getX();
+                        dy = (int) e.getY();
+                        break;
+                    case MotionEvent.ACTION_MOVE:
+                        int tempX = (int) e.getX();
+                        int tempY = (int) e.getY();
+                        if (Math.abs(dx - tempX) > mSlop && Math.abs(tempY - dy) > mSlop) {
+                            closeAllOpenedItem();
+                        }
+                        break;
+
+                }
+                return view.onTouchEvent(e);
+            }
+
+            public void closeAllOpenedItem() {
+                if (mLogAdapter != null)
+                     mLogAdapter.closeOpenedSwipeItemLayoutWithAnim();
+            }
+        });
         //update
         mLogAdapter.updateAll(mLogItemList);
     }
