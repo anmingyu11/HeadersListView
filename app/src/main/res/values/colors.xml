@@ -4,7 +4,7 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
 
-    <color name="item_decoration_title_background">#23282E</color>
-    <color name="item_decoration_title_fontcolor">#74869C</color>
+    <color name="item_decoration_title_background">@android:color/holo_blue_light</color>
+    <color name="item_decoration_title_fontColor">@android:color/holo_red_dark</color>
 
 </resources>

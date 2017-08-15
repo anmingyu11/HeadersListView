@@ -1,40 +1,15 @@
-package com.amy.headersdemo;
-
-import android.support.annotation.NonNull;
+package com.amy.headersdemo.bean;
 
 import com.amy.headersdemo.util.TimeUtil;
 
-public class LogItem implements Comparable<LogItem> {
-
-    public final static String PERIOD_1_TODAY = "今天";
-    public final static String PERIOD_2_WEEK = "过去七天";
-    public final static String PERIOD_3_MONTH = "一个月内";
-    public final static String PERIOD_4_EARLIER = "更早";
-
-    public enum PERIOD {
-        PERIOD_TODAY(1), PERIOD_WEEK(2), PERIOD_MONTH(3), PERIOD_EARLIER(4);
-
-        public String str;
-
-        PERIOD(int i) {
-            if (i == 1) {
-                str = PERIOD_1_TODAY;
-            } else if (i == 2) {
-                str = PERIOD_2_WEEK;
-            } else if (i == 3) {
-                str = PERIOD_3_MONTH;
-            } else if (i == 4) {
-                str = PERIOD_4_EARLIER;
-            }
-        }
-    }
+public class LogItem extends BaseLogItem {
 
     private String mContent;
     private String mDate;
-    private long mLogTime;
     private PERIOD mPeriod;
 
     public LogItem(String content, long logTime) {
+        setTYPE(TYPE_ITEM);
         setContent(content);
         setTime(logTime);
         convertPeriod();
@@ -90,13 +65,10 @@ public class LogItem implements Comparable<LogItem> {
     }
 
     @Override
-    public int compareTo(@NonNull LogItem logItem) {
-        if (this.mLogTime == logItem.mLogTime) {
-            return 0;
-        } else if (this.mLogTime > logItem.mLogTime) {
-            return -1;
-        } else {
-            return 1;
-        }
+    public String toString() {
+        return "LogItem{" +
+                ", mDate='" + mDate + '\'' +
+                ", mPeriod=" + mPeriod +
+                '}';
     }
 }

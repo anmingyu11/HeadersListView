@@ -20,14 +20,13 @@ import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.Typeface;
 import android.support.annotation.ColorRes;
 import android.support.annotation.DimenRes;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-
-import com.amy.headersdemo.animator.BaseItemAnimator;
 
 import java.util.Map;
 
@@ -56,9 +55,10 @@ public class FloatingBarItemDecoration extends RecyclerView.ItemDecoration {
         mBackgroundPaint = new Paint();
         setBackGroundColor(R.color.item_decoration_title_background);
 
-        mTextPaint = new Paint();
-        setTextColor(R.color.item_decoration_title_fontcolor);
-        setTextSize(R.dimen.item_decoration_title_fontsize);
+        mTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mTextPaint.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
+        setTextColor(R.color.item_decoration_title_fontColor);
+        setTextSize(R.dimen.item_decoration_title_fontSize);
 
         Paint.FontMetrics fm = mTextPaint.getFontMetrics();
         mTextHeight = (int) (fm.bottom - fm.top);
@@ -96,16 +96,17 @@ public class FloatingBarItemDecoration extends RecyclerView.ItemDecoration {
     public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
         super.getItemOffsets(outRect, view, parent, state);
         //LogUtil.e("getItemOffsets");
-        int position = ((RecyclerView.LayoutParams) view.getLayoutParams()).getViewAdapterPosition();
+/*        int position = ((RecyclerView.LayoutParams) view.getLayoutParams()).getViewAdapterPosition();
         if (mList.containsKey(position)) {
             outRect.set(0, mTitleHeight, 0, 0);
-        }
+        }*/
     }
 
     private boolean mLastMovingAnimationRunning = false;
 
     @Override
     public void onDraw(Canvas c, RecyclerView parent, RecyclerView.State state) {
+/*
 
         BaseItemAnimator baseItemAnimator = (BaseItemAnimator) parent.getItemAnimator();
 
@@ -116,11 +117,13 @@ public class FloatingBarItemDecoration extends RecyclerView.ItemDecoration {
             doOnDraw(c, parent);
         } else if (itemMovingAnimationRunning && mLastMovingAnimationRunning) {
             //Animator running
+*/
 /*            float transY = baseItemAnimator.getViewTranslationY();
             float height = baseItemAnimator.getViewHeight();
             float dY = transY > 0 ? transY - height : height + transY;
             c.translate(0, dY);
- */
+ *//*
+
             doOnDraw(c, parent);
         } else if (!itemMovingAnimationRunning && mLastMovingAnimationRunning) {
             //Animator end
@@ -131,6 +134,7 @@ public class FloatingBarItemDecoration extends RecyclerView.ItemDecoration {
         }
 
         mLastMovingAnimationRunning = itemMovingAnimationRunning;
+*/
 
         super.onDraw(c, parent, state);
     }

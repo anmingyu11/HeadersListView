@@ -12,9 +12,6 @@ import android.view.ViewConfiguration;
 import com.amy.headersdemo.animator.SlideInRightAnimator;
 import com.amy.headersdemo.inerpolator.CubicInterpolator;
 import com.amy.headersdemo.util.Faker;
-import com.amy.headersdemo.util.LogUtil;
-
-import java.util.LinkedHashMap;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -35,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
 
         initData();
 
-        updateHeadersList();
+        Faker.getInstance().updateHeader();
 
         setContentView(R.layout.main);
 
@@ -58,6 +55,27 @@ public class MainActivity extends AppCompatActivity {
         mRecyclerView.addItemDecoration(dividerItemDecoration);
         mRecyclerView.addItemDecoration(mFloatingBarItemDecoration);
         mRecyclerView.setItemAnimator(new SlideInRightAnimator(CubicInterpolator.OUT));
+
+        mLogAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+
+            @Override
+            public void onItemRangeChanged(int positionStart, int itemCount) {
+                super.onItemRangeChanged(positionStart, itemCount);
+                Faker.getInstance().updateHeader();
+            }
+
+            @Override
+            public void onChanged() {
+                super.onChanged();
+                Faker.getInstance().updateHeader();
+            }
+
+            @Override
+            public void onItemRangeRemoved(int positionStart, int itemCount) {
+                super.onItemRangeRemoved(positionStart, itemCount);
+                Faker.getInstance().updateHeader();
+            }
+        });
 
         mRecyclerView.setAdapter(mLogAdapter);
         mRecyclerView.setOnTouchListener(new View.OnTouchListener() {
@@ -93,25 +111,11 @@ public class MainActivity extends AppCompatActivity {
 
         //update
         mLogAdapter.updateAll(Faker.getInstance().mLogItemList);
-        mLogAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
-            @Override
-            public void onItemRangeRemoved(int positionStart, int itemCount) {
-                super.onItemRangeRemoved(positionStart, itemCount);
-                int logSize = Faker.getInstance().mLogItemList.size();
-                Faker.getInstance().updateHeadersList();
-                LinkedHashMap<Integer, String> headersList = Faker.getInstance().mHeaderList;
-                LogUtil.d("logSize : " + logSize);
-                LogUtil.d("headerSize : " + headersList.size());
-            }
-        });
+
     }
 
     public void initData() {
-        Faker.getInstance().initData();
-    }
-
-    public void updateHeadersList() {
-        Faker.getInstance().updateHeadersList();
+        Faker.getInstance().initData(40);
     }
 
 }

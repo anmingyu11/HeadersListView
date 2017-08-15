@@ -118,7 +118,7 @@ public abstract class BaseItemAnimator extends SimpleItemAnimator {
             // nothing to animate
             return;
         }
-        // First, remove stuff
+        // First, removeItem stuff
         for (ViewHolder holder : mPendingRemovals) {
             doAnimateRemove(holder);
         }

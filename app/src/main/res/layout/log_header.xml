@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/log_header_title"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/item_decoration_title_height"
+        android:background="@color/item_decoration_title_background"
+        android:gravity="left"
+        android:paddingLeft="@dimen/item_decoration_title_start_margin"
+        android:text="show"
+        android:textColor="@color/item_decoration_title_fontColor"
+        android:textSize="@dimen/item_decoration_title_fontSize"
+        android:textStyle="bold"/>
+
+</RelativeLayout>
