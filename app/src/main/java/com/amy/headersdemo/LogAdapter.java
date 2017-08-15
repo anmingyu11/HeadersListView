@@ -5,8 +5,10 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.amy.headersdemo.util.LogUtil;
 import com.amy.headersdemo.widget.SwipeItemLayout;
 
 import java.util.ArrayList;
@@ -38,11 +40,25 @@ public class LogAdapter extends RecyclerView.Adapter<LogAdapter.LogViewHolder> {
         return new LogViewHolder(view);
     }
 
+    public void remove(LogItem item) {
+        //Todo : this is a problem logic
+        int position = mLogItemList.indexOf(item);
+        mLogItemList.remove(position);
+        notifyItemRemoved(position);
+    }
+
     @Override
-    public void onBindViewHolder(LogViewHolder holder, int position) {
-        LogItem item = mLogItemList.get(position);
-        holder.mLogContentView.setText(item.getContent());
-        holder.mLogDateView.setText(item.getDate());
+    public void onBindViewHolder(LogViewHolder holder, final int position) {
+        final LogItem item = mLogItemList.get(position);
+        holder.mContent.setText(item.getContent());
+        holder.mDate.setText(item.getDate());
+        holder.mDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                LogUtil.d("onDelete");
+                remove(item);
+            }
+        });
         holder.mRoot.setDelegate(new SwipeItemLayout.SwipeItemLayoutDelegate() {
             @Override
             public void onSwipeItemLayoutOpened(SwipeItemLayout swipeItemLayout) {
@@ -77,14 +93,16 @@ public class LogAdapter extends RecyclerView.Adapter<LogAdapter.LogViewHolder> {
     public final class LogViewHolder extends RecyclerView.ViewHolder {
 
         private SwipeItemLayout mRoot;
-        private TextView mLogContentView;
-        private TextView mLogDateView;
+        private TextView mContent;
+        private TextView mDate;
+        private ImageView mDelete;
 
         public LogViewHolder(View itemView) {
             super(itemView);
             mRoot = (SwipeItemLayout) itemView;
-            mLogDateView = itemView.findViewById(R.id.log_date);
-            mLogContentView = itemView.findViewById(R.id.log_content);
+            mDelete = mRoot.findViewById(R.id.log_delete);
+            mDate = mRoot.findViewById(R.id.log_date);
+            mContent = mRoot.findViewById(R.id.log_content);
         }
     }
 }

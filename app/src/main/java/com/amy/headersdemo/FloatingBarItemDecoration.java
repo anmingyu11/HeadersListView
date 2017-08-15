@@ -27,6 +27,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
+import com.amy.headersdemo.animator.BaseItemAnimator;
+
 import java.util.Map;
 
 public class FloatingBarItemDecoration extends RecyclerView.ItemDecoration {
@@ -64,6 +66,10 @@ public class FloatingBarItemDecoration extends RecyclerView.ItemDecoration {
         mTextStartMargin = resources.getDimensionPixelOffset(R.dimen.item_decoration_title_start_margin);
     }
 
+    public void updateHeaderList(Map<Integer, String> list) {
+        this.mList = list;
+    }
+
     public void setTextSize(@DimenRes final int textSize) {
         mTextPaint.setTextSize(mContext.getResources().getDimensionPixelSize(
                 textSize
@@ -89,13 +95,47 @@ public class FloatingBarItemDecoration extends RecyclerView.ItemDecoration {
     @Override
     public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
         super.getItemOffsets(outRect, view, parent, state);
+        //LogUtil.e("getItemOffsets");
         int position = ((RecyclerView.LayoutParams) view.getLayoutParams()).getViewAdapterPosition();
-        outRect.set(0, mList.containsKey(position) ? mTitleHeight : 0, 0, 0);
+        if (mList.containsKey(position)) {
+            outRect.set(0, mTitleHeight, 0, 0);
+        }
     }
+
+    private boolean mLastMovingAnimationRunning = false;
 
     @Override
     public void onDraw(Canvas c, RecyclerView parent, RecyclerView.State state) {
+
+        BaseItemAnimator baseItemAnimator = (BaseItemAnimator) parent.getItemAnimator();
+
+        boolean itemMovingAnimationRunning = baseItemAnimator.isAnimationMoving();
+
+        if (itemMovingAnimationRunning && !mLastMovingAnimationRunning) {
+            //Animator start
+            doOnDraw(c, parent);
+        } else if (itemMovingAnimationRunning && mLastMovingAnimationRunning) {
+            //Animator running
+/*            float transY = baseItemAnimator.getViewTranslationY();
+            float height = baseItemAnimator.getViewHeight();
+            float dY = transY > 0 ? transY - height : height + transY;
+            c.translate(0, dY);
+ */
+            doOnDraw(c, parent);
+        } else if (!itemMovingAnimationRunning && mLastMovingAnimationRunning) {
+            //Animator end
+            doOnDraw(c, parent);
+        } else {
+            //Animator not running
+            doOnDraw(c, parent);
+        }
+
+        mLastMovingAnimationRunning = itemMovingAnimationRunning;
+
         super.onDraw(c, parent, state);
+    }
+
+    private void doOnDraw(Canvas c, RecyclerView parent) {
         final int left = parent.getPaddingLeft();
         final int right = parent.getWidth() - parent.getPaddingRight();
         final int childCount = parent.getChildCount();
@@ -113,10 +153,14 @@ public class FloatingBarItemDecoration extends RecyclerView.ItemDecoration {
     private void drawTitleArea(Canvas c, int left, int right, View child,
                                RecyclerView.LayoutParams params, int position) {
         final int rectBottom = child.getTop() - params.topMargin;
-        c.drawRect(left, rectBottom - mTitleHeight, right,
+        c.drawRect(left,
+                rectBottom - mTitleHeight,
+                right,
                 rectBottom, mBackgroundPaint);
-        c.drawText(mList.get(position), child.getPaddingLeft() + mTextStartMargin,
-                rectBottom - (mTitleHeight - mTextHeight) / 2 - mTextBaselineOffset, mTextPaint);
+        c.drawText(mList.get(position),
+                child.getPaddingLeft() + mTextStartMargin,
+                rectBottom - (mTitleHeight - mTextHeight) / 2 - mTextBaselineOffset,
+                mTextPaint);
     }
 
     @Override
@@ -137,6 +181,7 @@ public class FloatingBarItemDecoration extends RecyclerView.ItemDecoration {
             if (child.getHeight() + child.getTop() < mTitleHeight) {
                 c.save();
                 flag = true;
+                int dy = child.getHeight() + child.getTop() - mTitleHeight;
                 c.translate(0, child.getHeight() + child.getTop() - mTitleHeight);
             }
         }

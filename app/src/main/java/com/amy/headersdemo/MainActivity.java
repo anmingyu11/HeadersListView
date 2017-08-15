@@ -9,13 +9,12 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 
+import com.amy.headersdemo.animator.SlideInRightAnimator;
+import com.amy.headersdemo.inerpolator.CubicInterpolator;
+import com.amy.headersdemo.util.Faker;
 import com.amy.headersdemo.util.LogUtil;
-import com.amy.headersdemo.util.TimeUtil;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedHashMap;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -23,10 +22,9 @@ public class MainActivity extends AppCompatActivity {
 
     private RecyclerView mRecyclerView;
 
-    private final LinkedHashMap<Integer, String> mHeaderList = new LinkedHashMap<Integer, String>();
-    private List<LogItem> mLogItemList;
-
     private LogAdapter mLogAdapter;
+
+    private FloatingBarItemDecoration mFloatingBarItemDecoration;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,9 +35,12 @@ public class MainActivity extends AppCompatActivity {
 
         initData();
 
+        updateHeadersList();
+
         setContentView(R.layout.main);
 
         initRecyclerView();
+
     }
 
     public void initRecyclerView() {
@@ -50,12 +51,13 @@ public class MainActivity extends AppCompatActivity {
 
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(
                 this, DividerItemDecoration.VERTICAL);
-        FloatingBarItemDecoration floatingBarItemDecoration = new FloatingBarItemDecoration(
-                this, mHeaderList
+        mFloatingBarItemDecoration = new FloatingBarItemDecoration(
+                this, Faker.getInstance().mHeaderList
         );
 
         mRecyclerView.addItemDecoration(dividerItemDecoration);
-        mRecyclerView.addItemDecoration(floatingBarItemDecoration);
+        mRecyclerView.addItemDecoration(mFloatingBarItemDecoration);
+        mRecyclerView.setItemAnimator(new SlideInRightAnimator(CubicInterpolator.OUT));
 
         mRecyclerView.setAdapter(mLogAdapter);
         mRecyclerView.setOnTouchListener(new View.OnTouchListener() {
@@ -85,48 +87,31 @@ public class MainActivity extends AppCompatActivity {
 
             public void closeAllOpenedItem() {
                 if (mLogAdapter != null)
-                     mLogAdapter.closeOpenedSwipeItemLayoutWithAnim();
+                    mLogAdapter.closeOpenedSwipeItemLayoutWithAnim();
             }
         });
+
         //update
-        mLogAdapter.updateAll(mLogItemList);
+        mLogAdapter.updateAll(Faker.getInstance().mLogItemList);
+        mLogAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+            @Override
+            public void onItemRangeRemoved(int positionStart, int itemCount) {
+                super.onItemRangeRemoved(positionStart, itemCount);
+                int logSize = Faker.getInstance().mLogItemList.size();
+                Faker.getInstance().updateHeadersList();
+                LinkedHashMap<Integer, String> headersList = Faker.getInstance().mHeaderList;
+                LogUtil.d("logSize : " + logSize);
+                LogUtil.d("headerSize : " + headersList.size());
+            }
+        });
     }
 
     public void initData() {
-        mLogItemList = fakeLogs(40);
-        Collections.sort(mLogItemList);
-
-        LogItem.PERIOD lastPeriod = mLogItemList.get(0).getPeriod();
-        mHeaderList.put(lastPeriod.ordinal(), lastPeriod.str);
-        for (int i = 0; i < mLogItemList.size(); i++) {
-            LogItem item = mLogItemList.get(i);
-            LogItem.PERIOD currPeriod = item.getPeriod();
-
-            if (lastPeriod.ordinal() == LogItem.PERIOD.PERIOD_EARLIER.ordinal()) {
-                return;
-            }
-            if (currPeriod.ordinal() > lastPeriod.ordinal()) {
-                lastPeriod = currPeriod;
-                mHeaderList.put(i, lastPeriod.str);
-            }
-        }
-
+        Faker.getInstance().initData();
     }
 
-    public List<LogItem> fakeLogs(int size) {
-        List<LogItem> logItemList = new ArrayList<LogItem>();
-
-        for (int i = 0; i < size; i++) {
-            String content = "Content : ------ log ====== " + i + "------";
-            long millis = System.currentTimeMillis() - i * TimeUtil.MILLIS2DAY;
-            //LogUtil.d("millis : " + millis);
-            logItemList.add(i, new LogItem(content, millis));
-        }
-        LogUtil.d(
-                "fake : " + logItemList.size()
-        );
-        return logItemList;
+    public void updateHeadersList() {
+        Faker.getInstance().updateHeadersList();
     }
-
 
 }
