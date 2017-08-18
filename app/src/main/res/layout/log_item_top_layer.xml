@@ -6,25 +6,27 @@
     >
 
     <CheckBox
-        android:id="@+id/log_item_edit_checked"
+        android:id="@+id/log_item_topLayer_editCheck"
         style="@style/item_checkbox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
-        android:visibility="gone"
+        android:layout_margin="@dimen/item_editCheck_margin"
+        android:visibility="visible"
         />
 
     <LinearLayout
-        android:id="@+id/log_item_content"
+        android:id="@+id/log_item_topLayer_logContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
+        android:layout_alignParentLeft="true"
         android:orientation="vertical"
         >
 
         <TextView
-            android:id="@+id/log_content"
+            android:id="@+id/log_item_topLayer_logContent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="content--------------------"
@@ -33,7 +35,7 @@
             />
 
         <TextView
-            android:id="@+id/log_date"
+            android:id="@+id/log_item_topLayer_logDate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="date------------------------"
@@ -43,13 +45,14 @@
     </LinearLayout>
 
     <TextView
-        android:id="@+id/log_item_button"
+        android:id="@+id/log_item_topLayer_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:layout_toRightOf="@id/log_item_content"
+        android:layout_toRightOf="@id/log_item_topLayer_logContainer"
         android:text="同意"
         android:textSize="20dp"
+        android:visibility="gone"
         />
 
 </RelativeLayout>

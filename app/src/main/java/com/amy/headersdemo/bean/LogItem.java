@@ -4,16 +4,26 @@ import com.amy.headersdemo.util.TimeUtil;
 
 public class LogItem extends BaseLogItem {
 
+    private boolean isChecked;
     private String mContent;
     private String mDate;
     private PERIOD mPeriod;
 
     public LogItem(String content, long logTime) {
         setTYPE(TYPE_ITEM);
+        setChecked(false);
         setContent(content);
         setTime(logTime);
         convertPeriod();
         convertDate();
+    }
+
+    public void setChecked(boolean isChecked) {
+        this.isChecked = isChecked;
+    }
+
+    public boolean isChecked() {
+        return this.isChecked;
     }
 
     private void convertPeriod() {

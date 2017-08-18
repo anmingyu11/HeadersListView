@@ -1,15 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:orientation="vertical">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+    >
 
-    <android.support.v7.widget.RecyclerView
+    <CheckBox
+        android:id="@+id/editModeSwitcher"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_centerHorizontal="true"
+        android:background="@color/colorPrimary"
+        android:gravity="center"
+        android:text="openEditMode"
+        />
+
+    <com.amy.headersdemo.widget.LogRecyclerView
         android:id="@+id/main_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/editModeSwitcher"
         android:background="@drawable/common_bg"
         android:overScrollMode="never"
         />
 
-</LinearLayout>
+    <!--
+    <TextView
+        android:id="@+id/log_item_header_title"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/item_decoration_title_height"
+        android:layout_gravity="top"
+        android:background="@color/item_decoration_title_background"
+        android:gravity="left"
+        android:paddingLeft="@dimen/item_decoration_title_start_margin"
+        android:text="showssssssssssssssssss"
+        android:textColor="@color/item_decoration_title_fontColor"
+        android:textSize="@dimen/item_decoration_title_fontSize"
+        android:textStyle="bold"/>
+     -->
+</RelativeLayout>

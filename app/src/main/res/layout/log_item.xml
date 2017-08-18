@@ -1,20 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.amy.headersdemo.widget.SwipeItemLayout
+    android:id="@+id/log_item_swipe_item"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/item_left_shadow"
     app:bga_sil_bottomMode="layDown"
+    app:bga_sil_springDistance="1dp"
     app:bga_sil_swipeDirection="right">
 
     <include
-        layout="@layout/log_item_bottom_left_layer"
+        layout="@layout/log_item_bottom_layer"
         android:layout_width="@dimen/item_width"
         android:layout_height="@dimen/item_height"
         />
 
     <include
+        android:id="@+id/log_item_topLayer"
         layout="@layout/log_item_top_layer"
         android:layout_width="match_parent"
         android:layout_height="@dimen/item_height"

@@ -19,6 +19,7 @@ import android.widget.AdapterView;
 import android.widget.RelativeLayout;
 
 import com.amy.headersdemo.R;
+import com.amy.headersdemo.util.LogUtil;
 
 import java.lang.reflect.Method;
 
@@ -152,7 +153,7 @@ public class SwipeItemLayout extends RelativeLayout {
         if (ev.getAction() == MotionEvent.ACTION_CANCEL || ev.getAction() == MotionEvent.ACTION_UP) {
             mDragHelper.cancel();
         }
-        return mDragHelper.shouldInterceptTouchEvent(ev) && mGestureDetectorCompat.onTouchEvent(ev);
+        return isTouchable && mDragHelper.shouldInterceptTouchEvent(ev) && mGestureDetectorCompat.onTouchEvent(ev);
     }
 
     @Override
@@ -323,10 +324,27 @@ public class SwipeItemLayout extends RelativeLayout {
         }
     };
 
+    private OnTouchListener mOnTouchListener;
+    private Boolean isTouchable = true;
+
+    public void setTouchable(boolean isTouchable) {
+        this.isTouchable = isTouchable;
+    }
+
+    @Override
+    public void setOnTouchListener(OnTouchListener l) {
+        mOnTouchListener = l;
+    }
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        mDragHelper.processTouchEvent(event);
-        mGestureDetectorCompat.onTouchEvent(event);
+        if (mOnTouchListener != null) {
+            mOnTouchListener.onTouch(this, event);
+        }
+        if (isTouchable) {
+            mDragHelper.processTouchEvent(event);
+            mGestureDetectorCompat.onTouchEvent(event);
+        }
         return true;
     }
 
@@ -464,9 +482,10 @@ public class SwipeItemLayout extends RelativeLayout {
      * @param isOpen 1表示打开，0表示关闭
      */
     private void smoothSlideTo(int isOpen) {
-        if (mDragHelper.smoothSlideViewTo(mTopView,
-                getCloseOrOpenTopViewFinalLeft(isOpen),
-                getPaddingTop() + mTopLp.topMargin)) {
+        final int finalLeft = getCloseOrOpenTopViewFinalLeft(isOpen);
+        final int finalTop = getPaddingTop() + mTopLp.topMargin;
+        boolean animate = mDragHelper.smoothSlideViewTo(mTopView, finalLeft, finalTop);
+        if (animate) {
             if (isOpen == 1) {
                 mBottomView.setVisibility(VISIBLE);
             }
@@ -543,7 +562,44 @@ public class SwipeItemLayout extends RelativeLayout {
         }
     }
 
+    public interface DragStateChangeListener {
+
+        int STATE_IDLE = 0;
+        int STATE_DRAGGING = 1;
+        int STATE_SETTLING = 2;
+
+        /**
+         * Called when the drag state changes. See the <code>STATE_*</code> constants
+         * for more information.
+         *
+         * @param currentState The new drag state
+         * @see #STATE_IDLE
+         * @see #STATE_DRAGGING
+         * @see #STATE_SETTLING
+         */
+        void onDragStateChanged(int lastState, int currentState);
+    }
+
+    private DragStateChangeListener mDragStateChangeListener;
+
+    public void setDragStateChangeListener(DragStateChangeListener dragStateChangeListener) {
+        mDragStateChangeListener = dragStateChangeListener;
+    }
+
     private ViewDragHelper.Callback mDragHelperCallback = new ViewDragHelper.Callback() {
+
+        private int lastState = 0;
+        private int currentState = 0;
+
+        @Override
+        public void onViewDragStateChanged(int state) {
+            super.onViewDragStateChanged(state);
+            lastState = currentState;
+            currentState = state;
+            if (mDragStateChangeListener != null) {
+                mDragStateChangeListener.onDragStateChanged(lastState, currentState);
+            }
+        }
 
         @Override
         public boolean tryCaptureView(View child, int pointerId) {
@@ -610,8 +666,6 @@ public class SwipeItemLayout extends RelativeLayout {
             }
 
             // 处理底部视图的透明度
-            float alpha = 0.1f + 0.9f * mDragRatio;
-            ViewCompat.setAlpha(mBottomView, alpha);
 
             dispatchSwipeEvent();
 
@@ -628,7 +682,9 @@ public class SwipeItemLayout extends RelativeLayout {
             if (mSwipeDirection == SwipeDirection.Left) {
                 // 向左滑动为打开，向右滑动为关闭
 
-                if (xvel < -VEL_THRESHOLD || (mPreStatus == Status.Closed && xvel < VEL_THRESHOLD && mDragRatio >= 0.3f) || (mPreStatus == Status.Opened && xvel < VEL_THRESHOLD && mDragRatio >= 0.7f)) {
+                if (xvel < -VEL_THRESHOLD
+                        || (mPreStatus == Status.Closed && xvel < VEL_THRESHOLD && mDragRatio >= 0.3f)
+                        || (mPreStatus == Status.Opened && xvel < VEL_THRESHOLD && mDragRatio >= 0.7f)) {
                     // 向左的速度达到条件
                     finalLeft -= mDragRange;
                 }
@@ -636,7 +692,9 @@ public class SwipeItemLayout extends RelativeLayout {
             } else {
                 // 向左滑动为关闭，向右滑动为打开
 
-                if (xvel > VEL_THRESHOLD || (mPreStatus == Status.Closed && xvel > -VEL_THRESHOLD && mDragRatio >= 0.3f) || (mPreStatus == Status.Opened && xvel > -VEL_THRESHOLD && mDragRatio >= 0.7f)) {
+                if (xvel > VEL_THRESHOLD
+                        || (mPreStatus == Status.Closed && xvel > -VEL_THRESHOLD && mDragRatio >= 0.3f)
+                        || (mPreStatus == Status.Opened && xvel > -VEL_THRESHOLD && mDragRatio >= 0.7f)) {
                     finalLeft += mDragRange;
                 }
             }
@@ -644,6 +702,7 @@ public class SwipeItemLayout extends RelativeLayout {
 
             // 要执行下面的代码，不然不会自动收缩完毕或展开完毕
             ViewCompat.postInvalidateOnAnimation(SwipeItemLayout.this);
+            LogUtil.e("------------------------- release ----------------------");
         }
 
     };

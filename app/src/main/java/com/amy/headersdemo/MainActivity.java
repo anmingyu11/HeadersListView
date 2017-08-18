@@ -8,6 +8,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 
 import com.amy.headersdemo.animator.SlideInRightAnimator;
 import com.amy.headersdemo.inerpolator.CubicInterpolator;
@@ -36,6 +38,14 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.main);
 
+        CheckBox c = (CheckBox) findViewById(R.id.editModeSwitcher);
+        c.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                mLogAdapter.setEditMode(isChecked);
+            }
+        });
+
         initRecyclerView();
 
     }
@@ -44,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
         mRecyclerView = (RecyclerView) findViewById(R.id.main_list);
 
         mLogAdapter = new LogAdapter();
+        mLogAdapter.setHost(mRecyclerView);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(
@@ -85,7 +96,6 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public boolean onTouch(View view, MotionEvent e) {
-
                 switch (e.getAction()) {
                     case MotionEvent.ACTION_DOWN:
                         dx = (int) e.getX();
@@ -110,7 +120,8 @@ public class MainActivity extends AppCompatActivity {
         });
 
         //update
-        mLogAdapter.updateAll(Faker.getInstance().mLogItemList);
+        mLogAdapter.setLogItemList(Faker.getInstance().mLogItemList);
+        mLogAdapter.updateAll();
 
     }
 
